@@ -21,3 +21,17 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+const Task = require('./models/Task');
+
+// получити всі таски 
+app.get('/tasks', async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
+});
+
+// створення задачі 
+app.post('/tasks', async (req, res) => {
+  const newTask = new Task(req.body);
+  await newTask.save();
+  res.json(newTask);
+});
