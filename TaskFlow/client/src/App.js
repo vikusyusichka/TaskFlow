@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './App.css';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_API;
@@ -43,18 +44,20 @@ function App() {
       <h1>TaskFlow</h1>
 
       <div style={{ marginBottom: '1rem' }}>
-        <input
+        <input 
+          class="task-name"
           type="text"
           placeholder="Назва задачі"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <br />
-        <textarea
+        <input
+          class="task-description"
+          type="text"
           placeholder="Опис задачі"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+          onChange={(e) => setDescription(e.target.value)}></input>
         <br />
         <button onClick={handleAddTask}>Додати задачу</button>
       </div>
