@@ -6,8 +6,13 @@ const API = process.env.REACT_APP_API;
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [taskColor, setTaskColor] = useState('#cccccc');
+  const [suggestedColors, setSuggestedColors] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [timer, setTimer] = useState(0);
 
   const fetchTasks = async () => {
     try {
@@ -23,53 +28,117 @@ function App() {
   }, []);
 
   const handleAddTask = async () => {
-    if (!title) return;
+    if (!taskTitle) return;
 
     try {
       await axios.post(`${API}/tasks`, {
-        title,
-        description,
+        title: taskTitle,
+        description: taskDescription,
+        color: taskColor,
       });
 
-      setTitle('');
-      setDescription('');
+      setTaskTitle('');
+      setTaskDescription('');
+      setTaskColor('#cccccc');
+      setShowModal(false);
+      setSuggestedColors([]);
       fetchTasks();
     } catch (err) {
       console.error('Post error:', err);
     }
   };
 
-  return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h1>TaskFlow</h1>
+  const generateRandomColors = () => {
+    const colors = Array.from({ length: 5 }, () =>
+      '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')
+    );
+    setSuggestedColors(colors);
+    setShowSuggestions(true);
+    setTimer(5);
 
-      <div style={{ marginBottom: '1rem' }}>
-        <input 
-          class="task-name"
-          type="text"
-          placeholder="Назва задачі"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <br />
-        <input
-          class="task-description"
-          type="text"
-          placeholder="Опис задачі"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}></input>
-        <br />
-        <button onClick={handleAddTask}>Додати задачу</button>
-      </div>
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setShowSuggestions(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  return (
+    <div className="app-container">
+      <h1>TaskFlow</h1>
+      <button onClick={() => setShowModal(!showModal)} className="toggle-btn">
+        {showModal ? 'Згорнути' : 'Додати задачу'}
+      </button>
+
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Додати задачу</h2>
+              <button onClick={() => setShowModal(false)} className="modal-close-btn">✖</button>
+            </div>
+            <div className="task-add">
+              <input
+                className="task-name"
+                type="text"
+                placeholder="Назва задачі"
+                value={taskTitle}
+                onChange={(e) => setTaskTitle(e.target.value)}
+              />
+              <input
+                type="text"
+                className="task-description"
+                placeholder="Опис (необов'язково)"
+                value={taskDescription}
+                onChange={(e) => setTaskDescription(e.target.value)}
+              />
+            </div>
+            <div className="color-section">
+              <label>Колір задачі:</label>
+              <input
+                type="color"
+                value={taskColor}
+                onChange={(e) => setTaskColor(e.target.value)}
+                className="color-picker"
+              />
+              <button onClick={generateRandomColors}>Рекомендовані</button>
+            </div>
+            {showSuggestions && (
+              <div className="suggestions">
+                <div className="timer">⏱ {timer} сек</div>
+                {suggestedColors.map((color, idx) => (
+                  <button
+                    key={idx}
+                    className="color-swatch"
+                    style={{ backgroundColor: color }}
+                    onClick={() => setTaskColor(color)}
+                  />
+                ))}
+              </div>
+            )}
+            <button onClick={handleAddTask}>Створити</button>
+          </div>
+        </div>
+      )}
 
       <h2>Список задач:</h2>
-      <ul>
+      <div className="task-list">
         {tasks.map((task) => (
-          <li key={task._id}>
-            <strong>{task.title}</strong>: {task.description}
-          </li>
+          <div
+            className="task-card"
+            key={task._id}
+            style={{ backgroundColor: task.color || '#f0f0f0' }}
+          >
+            <h3>{task.title}</h3>
+            <p>{task.description}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

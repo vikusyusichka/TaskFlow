@@ -36,6 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
 body {
   background: linear-gradient(to right, #e0e7ff, #f3f4f6);
   min-height: 100vh;
@@ -46,58 +47,65 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.container {
-  background: #ffffff;
+.app-container {
   padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 28rem;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 300px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+  max-width: 400px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-close-btn {
+  font-size: 1.2rem;
+  background: #ff4444;
+  border: 1px solid #ff2222;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: #cc0000;
 }
 
 h1 {
   font-size: 2.25rem;
   font-weight: bold;
-  text-align: center;
   color: #4c51bf;
   margin-bottom: 1.5rem;
-}
-
-.input-field {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: #4c51bf;
-  box-shadow: 0 0 0 2px rgba(76, 81, 191, 0.2);
-}
-
-textarea.input-field {
-  min-height: 4rem;
-  resize: vertical;
-}
-
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4c51bf;
-  color: #ffffff;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-button:hover {
-  background-color: #434190;
 }
 
 h2 {
@@ -107,45 +115,150 @@ h2 {
   margin-bottom: 1rem;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.task-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
 }
 
-li {
-  padding: 0.75rem;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-li strong {
-  color: #1f2937;
-}
-
-li p {
-  color: #4b5563;
-  margin-top: 0.5rem;
-}
-.task-name{
+.task-name {
   font-weight: bold;
   color: #1f2937;
   width: 300px;
   height: 50px;
   font-size: 20px;
-  border-radius: 10px;
   border: none;
+  border-radius: 10px;
   margin-bottom: 10px;
   text-align: center;
+  padding: 0.5rem;
 }
+
 .task-description {
   text-align: center;
   color: #4b5563;
   width: 300px;
   height: 50px;
   font-size: 16px;
-  margin-bottom: 10px;
-  border-radius: 10px;
   border: none;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 0.5rem;
+}
+
+.color-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.color-picker {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+
+.color-picker::-webkit-color-swatch {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 0;
+}
+
+.color-picker::-moz-color-swatch {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.color-section label {
+  margin-bottom: 0;
+}
+
+.color-section button {
+  padding: 0.5rem 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.color-section button:hover {
+  background-color: #357abd;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.timer {
+  margin-bottom: 0.5rem;
+}
+
+.suggestions button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.toggle-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #4a90e2;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background-color: #357abd;
+}
+
+button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #357abd;
+}
+
+.task-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.task-card {
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  width: 200px;
+  color: #000;
+  word-wrap: break-word;
+}
+
+.task-card h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.task-card p {
+  margin: 0;
 }
