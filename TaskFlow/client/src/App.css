@@ -262,3 +262,27 @@ button:hover {
 .task-card p {
   margin: 0;
 }
+.sort-dropdown {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-dropdown label {
+  font-size: 1rem;
+  color: #374151;
+}
+
+.sort-dropdown select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.sort-dropdown select:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
