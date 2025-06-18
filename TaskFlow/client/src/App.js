@@ -1,10 +1,11 @@
-
+// 📦 App.js — Task 6: імпорт потоку задач через async iterator
 import React, { useState, useRef, useEffect } from "react";
 import TaskForm from "./components/TaskForm";
 import TaskCard from "./components/TaskCard";
 import SortDropdown from "./components/SortDropdown";
 import { asyncFilterMap } from "./utils/asyncArrayFunctions";
 import { memoizeSortBy } from "./utils/memoizeAndSort";
+import { simulateTaskStream } from "./utils/taskStream";
 import "./App.css";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
   const [filter, setFilter] = useState("active");
   const [showModal, setShowModal] = useState(false);
   const modalRef = useRef(null);
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     const checkIfRelevant = async (task) => {
@@ -76,12 +78,29 @@ function App() {
     };
   }, []);
 
+  // ✅ Task 6: Імпортувати задачі зі стріму
+  const handleImportStream = async () => {
+    setIsImporting(true);
+    for await (const task of simulateTaskStream(20)) {
+      setTasks((prev) => [...prev, task]);
+    }
+    setIsImporting(false);
+  };
+
   return (
     <div className="App app-container">
       <h1>TaskFlow</h1>
 
       <button className="toggle-btn" onClick={() => setShowModal(true)}>
         + Нова задача
+      </button>
+
+      <button
+        className="toggle-btn"
+        onClick={handleImportStream}
+        disabled={isImporting}
+      >
+        {isImporting ? "Імпортую..." : "Імпортувати потік задач"}
       </button>
 
       {showModal && (
