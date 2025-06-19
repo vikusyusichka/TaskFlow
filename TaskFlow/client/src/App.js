@@ -1,11 +1,15 @@
-// 📦 App.js — Task 6: імпорт потоку задач через async iterator
+
 import React, { useState, useRef, useEffect } from "react";
 import TaskForm from "./components/TaskForm";
 import TaskCard from "./components/TaskCard";
 import SortDropdown from "./components/SortDropdown";
+import Logger from "./components/Logger";
+import Toast from "./components/Toast";
+import DoneToast from "./components/DoneToast";
 import { asyncFilterMap } from "./utils/asyncArrayFunctions";
 import { memoizeSortBy } from "./utils/memoizeAndSort";
 import { simulateTaskStream } from "./utils/taskStream";
+import { eventBus } from "./utils/eventBus";
 import "./App.css";
 
 function App() {
@@ -35,6 +39,7 @@ function App() {
     newTask.createdAt = Date.now();
     setTasks((prev) => [...prev, newTask]);
     setShowModal(false);
+    eventBus.emit("task:created", newTask);
   };
 
   const handleMarkAsDone = (taskId) => {
@@ -42,6 +47,7 @@ function App() {
     if (!completed) return;
     setDoneTasks([...doneTasks, completed]);
     setTasks(tasks.filter((t) => t.id !== taskId));
+    eventBus.emit("task:done", completed);
   };
 
   const handleSortChange = (order) => {
@@ -78,17 +84,19 @@ function App() {
     };
   }, []);
 
-  // ✅ Task 6: Імпортувати задачі зі стріму
   const handleImportStream = async () => {
     setIsImporting(true);
     for await (const task of simulateTaskStream(20)) {
       setTasks((prev) => [...prev, task]);
+      eventBus.emit("task:imported", task);
     }
     setIsImporting(false);
   };
 
   return (
     <div className="App app-container">
+      <Toast />
+      <DoneToast />
       <h1>TaskFlow</h1>
 
       <button className="toggle-btn" onClick={() => setShowModal(true)}>
@@ -130,6 +138,8 @@ function App() {
           <TaskCard key={task.id} task={task} onMarkDone={handleMarkAsDone} />
         ))}
       </div>
+
+      <Logger />
     </div>
   );
 }
