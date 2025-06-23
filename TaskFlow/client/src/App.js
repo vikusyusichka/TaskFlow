@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import TaskForm from "./components/TaskForm";
 import TaskCard from "./components/TaskCard";
@@ -18,6 +17,8 @@ function App() {
   const [sortOrder, setSortOrder] = useState("default");
   const [filter, setFilter] = useState("active");
   const [showModal, setShowModal] = useState(false);
+  const [proxyTasks, setProxyTasks] = useState([]);
+  const [showProxyList, setShowProxyList] = useState(true);
   const modalRef = useRef(null);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -26,12 +27,10 @@ function App() {
       await new Promise((res) => setTimeout(res, 100));
       return task.name.toLowerCase().includes("old") ? undefined : task;
     };
-
     async function filterRelevant() {
       const filtered = await asyncFilterMap(tasks, checkIfRelevant);
       setTasks(filtered);
     }
-
     filterRelevant();
   }, []);
 
@@ -93,6 +92,34 @@ function App() {
     setIsImporting(false);
   };
 
+  const handleFetchViaProxy = async () => {
+    try {
+      const res = await fetch("/proxy/tasks?auth=apikey");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Status: ${res.status}. Body: ${text}`);
+      }
+      const data = await res.json();
+      console.log("✅ Fetched proxy tasks:", data);
+      setProxyTasks(data.slice(0, 5));
+      setShowProxyList(true);
+    } catch (err) {
+      console.error("❌ Proxy fetch failed", err);
+    }
+  };
+
+  const handleAddProxyTask = (task) => {
+    const newTask = {
+      id: Date.now(),
+      name: task.title || task.name,
+      description: "Імпортовано з API",
+      priority: 2,
+      color: "#c084fc",
+      createdAt: Date.now(),
+    };
+    setTasks((prev) => [...prev, newTask]);
+  };
+
   return (
     <div className="App app-container">
       <Toast />
@@ -109,6 +136,10 @@ function App() {
         disabled={isImporting}
       >
         {isImporting ? "Імпортую..." : "Імпортувати потік задач"}
+      </button>
+
+      <button className="toggle-btn" onClick={handleFetchViaProxy}>
+        ⬇️ Імпортувати задачі з зовнішнього API
       </button>
 
       {showModal && (
@@ -138,6 +169,23 @@ function App() {
           <TaskCard key={task.id} task={task} onMarkDone={handleMarkAsDone} />
         ))}
       </div>
+
+      {proxyTasks.length > 0 && showProxyList && (
+        <div className="proxy-preview">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h3>📡 Імпортовані задачі з API:</h3>
+            <button onClick={() => setShowProxyList(false)}>✖</button>
+          </div>
+          <ul>
+            {proxyTasks.map((t) => (
+              <li key={t.id} style={{ marginBottom: "0.5rem" }}>
+                {t.title || t.name}{" "}
+                <button onClick={() => handleAddProxyTask(t)}>Додати в ToDo</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <Logger />
     </div>

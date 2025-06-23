@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const Task = require('./models/Task');
+const proxyRoutes = require("./routes/proxy");
 
 const app = express();
 app.use(cors());
@@ -31,6 +32,14 @@ app.post('/tasks', async (req, res) => {
   const newTask = new Task(req.body);
   await newTask.save();
   res.json(newTask);
+});
+
+// Роут-проксі з авторизацією (Task 8)
+app.use("/proxy", proxyRoutes);
+
+// Тестовий рут
+app.get("/", (req, res) => {
+  res.send("Server is running!");
 });
 
 const PORT = process.env.PORT || 5000;

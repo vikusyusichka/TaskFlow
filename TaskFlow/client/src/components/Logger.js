@@ -7,13 +7,13 @@ function Logger() {
 
   useEffect(() => {
     const handleCreate = (e) => {
-      setLogs((prev) => [...prev, `✅ Task created: ${e.detail.name}`]);
+      setLogs((prev) => [...prev, `Task created: ${e.detail.name}`]);
     };
     const handleDone = (e) => {
-      setLogs((prev) => [...prev, `✔️ Task completed: ${e.detail.name}`]);
+      setLogs((prev) => [...prev, `Task completed: ${e.detail.name}`]);
     };
     const handleImport = (e) => {
-      setLogs((prev) => [...prev, `📦 Task imported: ${e.detail.name}`]);
+      setLogs((prev) => [...prev, `Task imported: ${e.detail.name}`]);
     };
 
     eventBus.on("task:created", handleCreate);
