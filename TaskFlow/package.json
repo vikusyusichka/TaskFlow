@@ -1,0 +1,14 @@
+{
+  "name": "taskflow",
+  "version": "1.0.0",
+  "description": "Бібліотека генераторів для TaskFlow",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "demo": "node demo/task1Demo.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "vikusyusichka",
+  "license": "MIT"
+}

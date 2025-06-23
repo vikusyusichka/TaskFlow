@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../App.css";
+import { randomColorGenerator } from "../libs/colorGenerator";
 
-function getRandomColor() {
-  return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
-}
+
+
 
 function TaskForm({ onCreate }) {
   const [name, setName] = useState("");
@@ -12,6 +12,8 @@ function TaskForm({ onCreate }) {
   const [color, setColor] = useState("#60a5fa");
   const [generatedColors, setGeneratedColors] = useState([]);
   const [countdown, setCountdown] = useState(0);
+  const generator = useRef(randomColorGenerator());  // Генератор з бібліотеки (Task2)
+
 
   useEffect(() => {
     if (countdown > 0) {
@@ -25,7 +27,7 @@ function TaskForm({ onCreate }) {
   }, [countdown]);
 
   const handleGenerateColors = () => {
-    const colors = Array.from({ length: 5 }, getRandomColor);
+    const colors = Array.from({ length: 5 }, () => generator.current.next().value);
     setGeneratedColors(colors);
     setCountdown(5);
   };
